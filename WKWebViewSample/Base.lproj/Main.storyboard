@@ -61,7 +61,9 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="backButton" destination="JGS-1K-2Pa" id="eE4-SC-tpg"/>
                         <outlet property="containerView" destination="pqI-4t-t3V" id="5cm-jz-6mJ"/>
+                        <outlet property="forwardButton" destination="29e-BM-oZ3" id="7ek-GW-YyF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
