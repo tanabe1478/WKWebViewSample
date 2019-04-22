@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pqI-4t-t3V">
-                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                                <rect key="frame" x="0.0" y="94" width="414" height="768"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JGS-1K-2Pa">
@@ -44,19 +44,50 @@
                                     <action selector="tappedForwardButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="POR-hj-uJ9"/>
                                 </connections>
                             </button>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ge9-I5-NIw">
+                                <rect key="frame" x="0.0" y="44" width="414" height="50"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" verticalHuggingPriority="251" text="ページタイトル未取得" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7DI-aq-7ec">
+                                        <rect key="frame" x="120.5" y="14.5" width="173.5" height="21"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nOE-ho-gdt">
+                                        <rect key="frame" x="345" y="4.5" width="49" height="41"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                        <state key="normal" title="更新"/>
+                                        <connections>
+                                            <action selector="tappedReloadButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="H5A-wm-UkH"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="nOE-ho-gdt" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="7DI-aq-7ec" secondAttribute="trailing" constant="15" id="3Pt-Jh-pPQ"/>
+                                    <constraint firstAttribute="trailing" secondItem="nOE-ho-gdt" secondAttribute="trailing" constant="20" id="6ig-q5-8f8"/>
+                                    <constraint firstItem="nOE-ho-gdt" firstAttribute="centerY" secondItem="ge9-I5-NIw" secondAttribute="centerY" id="GaE-18-Ji2"/>
+                                    <constraint firstItem="7DI-aq-7ec" firstAttribute="centerX" secondItem="ge9-I5-NIw" secondAttribute="centerX" id="iNR-er-0xw"/>
+                                    <constraint firstAttribute="height" constant="50" id="pFq-0Q-M1A"/>
+                                    <constraint firstItem="7DI-aq-7ec" firstAttribute="centerY" secondItem="ge9-I5-NIw" secondAttribute="centerY" id="yWm-sa-sgM"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="pqI-4t-t3V" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="BtD-w6-5qB"/>
+                            <constraint firstAttribute="trailing" secondItem="ge9-I5-NIw" secondAttribute="trailing" id="SUx-iJ-syd"/>
                             <constraint firstItem="29e-BM-oZ3" firstAttribute="top" secondItem="JGS-1K-2Pa" secondAttribute="top" id="TMS-vs-HrD"/>
+                            <constraint firstItem="ge9-I5-NIw" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="VeC-DG-tjo"/>
                             <constraint firstItem="pqI-4t-t3V" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="YIa-4q-gAf"/>
                             <constraint firstItem="pqI-4t-t3V" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="bfs-GC-Sob"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="29e-BM-oZ3" secondAttribute="trailing" constant="30" id="dEK-16-cRp"/>
-                            <constraint firstItem="pqI-4t-t3V" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="hIC-vz-0Dd"/>
                             <constraint firstItem="29e-BM-oZ3" firstAttribute="bottom" secondItem="JGS-1K-2Pa" secondAttribute="bottom" id="hWm-pX-kCQ"/>
                             <constraint firstItem="JGS-1K-2Pa" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="iKn-x4-eLh"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="JGS-1K-2Pa" secondAttribute="bottom" constant="50" id="kzi-ED-HWB"/>
+                            <constraint firstItem="ge9-I5-NIw" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="n5k-bX-oRq"/>
                             <constraint firstItem="29e-BM-oZ3" firstAttribute="leading" secondItem="JGS-1K-2Pa" secondAttribute="trailing" constant="8" symbolic="YES" id="pDj-n7-1JR"/>
+                            <constraint firstItem="pqI-4t-t3V" firstAttribute="top" secondItem="ge9-I5-NIw" secondAttribute="bottom" id="zY8-w1-vxa"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
@@ -64,6 +95,8 @@
                         <outlet property="backButton" destination="JGS-1K-2Pa" id="eE4-SC-tpg"/>
                         <outlet property="containerView" destination="pqI-4t-t3V" id="5cm-jz-6mJ"/>
                         <outlet property="forwardButton" destination="29e-BM-oZ3" id="7ek-GW-YyF"/>
+                        <outlet property="reloadButton" destination="nOE-ho-gdt" id="2Oq-0Q-HJt"/>
+                        <outlet property="titleLabel" destination="7DI-aq-7ec" id="Al6-Nj-HyU"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

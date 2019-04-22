@@ -10,16 +10,16 @@ import UIKit
 import WebKit
 
 class ViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
-    @IBOutlet weak var containerView: UIView!
+    @IBOutlet weak private var containerView: UIView!
     var webView: WKWebView!
     private var _observers = [NSKeyValueObservation]()
-    @IBOutlet weak var backButton: UIButton! {
+    @IBOutlet weak private var backButton: UIButton! {
         didSet {
             backButton.isEnabled = false
             backButton.alpha = 0.4
         }
     }
-    @IBOutlet weak var forwardButton: UIButton! {
+    @IBOutlet weak private var forwardButton: UIButton! {
         didSet {
             forwardButton.isEnabled = false
             forwardButton.alpha = 0.4
@@ -36,6 +36,11 @@ class ViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
         if webView.canGoForward {
             webView.goForward()
         }
+    }
+    @IBOutlet weak private var titleLabel: UILabel!
+    @IBOutlet weak var reloadButton: UIButton!
+    @IBAction func tappedReloadButton(_ sender: Any) {
+        webView.reload()
     }
     
     override func loadView() {
@@ -71,18 +76,29 @@ class ViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
                 }
             }
         })
+        
+        _observers.append(webView.observe(\.isLoading, options: .new) {_, change in
+            if let value = change.newValue {
+                DispatchQueue.main.async {
+                    // isLoadingがtrueのときは更新できないようにしたい
+                    self.reloadButton.isEnabled = !value
+                    self.reloadButton.alpha = !value ? 1.0 : 0.4
+                }
+            }
+        })
+        
+        _observers.append(webView.observe(\.title, options: .new) {_, change in
+            if let value = change.newValue {
+                DispatchQueue.main.async {
+                    self.titleLabel.text = value
+                }
+            }
+        })
+        
+        
         guard let url = URL(string: "https://www.apple.com") else { fatalError() }
         let request = URLRequest(url: url)
         webView.load(request)
     }
-    
-//    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-//        DispatchQueue.main.async {
-//            self.backButton.isEnabled = webView.canGoBack
-//            self.backButton.alpha = webView.canGoBack ? 1.0 : 0.4
-//            self.forwardButton.isEnabled = webView.canGoForward
-//            self.forwardButton.alpha = webView.canGoForward ? 1.0 : 0.4
-//        }
-//    }
 }
 
