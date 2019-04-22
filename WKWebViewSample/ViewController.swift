@@ -25,7 +25,6 @@ class ViewController: UIViewController {
         self.view.addSubview(self.progressView)
         _observers.append(self.webView.observe(\.estimatedProgress, options: .new, changeHandler: { (webView, change) in
             self.progressView.alpha = 1.0
-            // estimatedProgressが変更された時にプログレスバーの値を変更
             self.progressView.setProgress(Float(change.newValue!), animated: true)
             if self.webView.estimatedProgress >= 1.0 {
                 UIView.animate(withDuration: 0.3,
@@ -164,6 +163,52 @@ extension ViewController: WKUIDelegate {
             return nil
         }
         return nil
+    }
+    
+    func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
+        // alert対応
+        let alertController = UIAlertController(title: "", message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK", style: .default) { _ in
+            completionHandler()
+        }
+        alertController.addAction(action)
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
+        // confirm対応
+        let alertController = UIAlertController(title: "", message: message, preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
+            completionHandler(false)
+        }
+        let okAction = UIAlertAction(title: "OK", style: .default) { _ in
+            completionHandler(true)
+        }
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(okAction)
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
+        let alertController  = UIAlertController(title: "", message: prompt, preferredStyle: .alert)
+        let okHandler: () -> Void = {
+            if let textField = alertController.textFields?.first {
+                completionHandler(textField.text)
+            } else {
+                completionHandler("")
+            }
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
+            completionHandler(nil)
+        }
+        let okAction = UIAlertAction(title: "OK", style: .default) { _ in
+            okHandler()
+        }
+        alertController.addTextField { $0.text = defaultText }
+        alertController.addAction(cancelAction)
+        alertController.addAction(okAction)
+        present(alertController, animated: true, completion: nil)
     }
 }
 
