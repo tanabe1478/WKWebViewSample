@@ -9,7 +9,7 @@
 import UIKit
 import WebKit
 
-class ViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
+class ViewController: UIViewController {
     @IBOutlet weak private var containerView: UIView!
     var webView: WKWebView!
     private var _observers = [NSKeyValueObservation]()
@@ -97,11 +97,46 @@ class ViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
         })
         
         
-        guard let url = URL(string: "https://www.apple.com") else { fatalError() }
+        guard let url = URL(string: "https://google.co.jp") else { fatalError() }
         let request = URLRequest(url: url)
         webView.load(request)
     }
 }
+
+extension ViewController: WKUIDelegate {
+    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+
+        
+        guard let url = navigationAction.request.url else {
+            return nil
+        }
+        
+        if url.absoluteString.range(of: "//itunes.apple.com/") != nil {
+            if UIApplication.shared.responds(to: #selector(UIApplication.open(_:options:completionHandler:))) {
+                UIApplication.shared.open(url, options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly: false], completionHandler: { (finished: Bool) in
+                    
+                })
+            } else {
+                UIApplication.shared.open(url)
+                return nil
+            }
+        } else if !url.absoluteString.hasPrefix("http://") && !url.absoluteString.hasPrefix("https://") {
+            if UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url)
+                return nil
+            }
+        }
+        
+        // target="_blank"のリンクを開く
+        guard let targetFrame = navigationAction.targetFrame, targetFrame.isMainFrame else {
+            webView.load(URLRequest(url: url))
+            return nil
+        }
+        return nil
+    }
+}
+
+extension ViewController: WKNavigationDelegate {}
 
 extension ViewController:  UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
