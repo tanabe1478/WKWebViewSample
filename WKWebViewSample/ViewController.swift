@@ -49,6 +49,7 @@ class ViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
         webView = WKWebView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height), configuration: webConfiguration)
         webView.uiDelegate = self
         webView.navigationDelegate = self
+        webView.allowsBackForwardNavigationGestures = true
         containerView.addSubview(webView)
         // 制約
         webView.topAnchor.constraint(equalToSystemSpacingBelow: containerView.topAnchor, multiplier: 0.0).isActive = true
@@ -102,3 +103,9 @@ class ViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
     }
 }
 
+extension ViewController:  UIGestureRecognizerDelegate {
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        // webView.goBack()を優先したい
+        return !webView.canGoBack
+    }
+}
