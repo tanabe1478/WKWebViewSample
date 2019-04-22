@@ -11,8 +11,36 @@ import WebKit
 
 class ViewController: UIViewController {
     @IBOutlet weak private var containerView: UIView!
+    @IBOutlet weak private var headerView: UIView!
     var webView: WKWebView!
     private var _observers = [NSKeyValueObservation]()
+    var progressView: UIProgressView!
+    func setUpProgressView() {
+        self.progressView = UIProgressView(frame: CGRect(
+            x: 0,
+            y: headerView.frame.maxY,
+            width: self.view.frame.width,
+            height: 3.0))
+        self.progressView.progressViewStyle = .bar
+        self.view.addSubview(self.progressView)
+        _observers.append(self.webView.observe(\.estimatedProgress, options: .new, changeHandler: { (webView, change) in
+            self.progressView.alpha = 1.0
+            // estimatedProgressが変更された時にプログレスバーの値を変更
+            self.progressView.setProgress(Float(change.newValue!), animated: true)
+            if self.webView.estimatedProgress >= 1.0 {
+                UIView.animate(withDuration: 0.3,
+                               delay: 0.3,
+                               options: [.curveEaseOut],
+                               animations: { [weak self] in
+                                self?.progressView.alpha = 0.0
+                    }, completion: {_ in
+                        self.progressView.setProgress(0.0, animated: false)
+                })
+            }
+        })
+        )
+    }
+    
     @IBOutlet weak private var backButton: UIButton! {
         didSet {
             backButton.isEnabled = false
@@ -45,6 +73,7 @@ class ViewController: UIViewController {
     
     override func loadView() {
         super.loadView()
+        
         let webConfiguration = WKWebViewConfiguration()
         webView = WKWebView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height), configuration: webConfiguration)
         webView.uiDelegate = self
@@ -56,6 +85,8 @@ class ViewController: UIViewController {
         webView.bottomAnchor.constraint(equalToSystemSpacingBelow: containerView.bottomAnchor, multiplier: 0.0)
         webView.leadingAnchor.constraint(equalToSystemSpacingAfter: containerView.leadingAnchor, multiplier: 0.0)
         webView.trailingAnchor.constraint(equalToSystemSpacingAfter: containerView.trailingAnchor, multiplier: 0.0)
+        setUpProgressView()
+        
     }
     
     override func viewDidLoad() {
