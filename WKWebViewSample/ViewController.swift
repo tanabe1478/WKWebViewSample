@@ -10,11 +10,14 @@ import UIKit
 import WebKit
 
 class ViewController: UIViewController {
+    @IBOutlet weak var headerHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak private var containerView: UIView!
     @IBOutlet weak private var headerView: UIView!
     var webView: WKWebView!
     private var _observers = [NSKeyValueObservation]()
     var progressView: UIProgressView!
+    var beginingPoint: CGPoint!
+    var isViewShowed: Bool!
     func setUpProgressView() {
         self.progressView = UIProgressView(frame: CGRect(
             x: 0,
@@ -77,6 +80,7 @@ class ViewController: UIViewController {
         webView = WKWebView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height), configuration: webConfiguration)
         webView.uiDelegate = self
         webView.navigationDelegate = self
+        webView.scrollView.delegate = self
         webView.allowsBackForwardNavigationGestures = true
         containerView.addSubview(webView)
         // 制約
@@ -91,6 +95,8 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        isViewShowed = false
+        beginingPoint = CGPoint(x: 0, y: 0)
         _observers.append(webView.observe(\.canGoBack, options: .new){ _, change in
             if let value = change.newValue {
                  DispatchQueue.main.async {
@@ -306,5 +312,41 @@ extension ViewController:  UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         // webView.goBack()を優先したい
         return !webView.canGoBack
+    }
+}
+
+// スクロール領域拡大のためにconform
+extension ViewController: UIScrollViewDelegate {
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        beginingPoint = scrollView.contentOffset
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        isViewShowed = true
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let currentPoint = scrollView.contentOffset
+        let contentSize = scrollView.contentSize
+        let frameSize = scrollView.frame
+        let maxOffset = contentSize.height - frameSize.height
+        
+        if currentPoint.y >= maxOffset {
+            // print("hit the bottom")
+        } else if beginingPoint.y + 100 < currentPoint.y {
+            self.headerHeightConstraint.constant = 0.0
+            headerView.alpha = 0.0
+            UIView.animate(withDuration: 0.3) {
+                self.view.layoutIfNeeded()
+            }
+        } else {
+            self.headerHeightConstraint.constant = 50.0
+            headerView.alpha = 1.0
+
+            UIView.animate(withDuration: 0.3) {
+                self.view.layoutIfNeeded()
+            }
+        }
+        
     }
 }

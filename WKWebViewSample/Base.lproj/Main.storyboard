@@ -95,6 +95,7 @@
                         <outlet property="backButton" destination="JGS-1K-2Pa" id="eE4-SC-tpg"/>
                         <outlet property="containerView" destination="pqI-4t-t3V" id="5cm-jz-6mJ"/>
                         <outlet property="forwardButton" destination="29e-BM-oZ3" id="7ek-GW-YyF"/>
+                        <outlet property="headerHeightConstraint" destination="pFq-0Q-M1A" id="2Ta-DV-XyD"/>
                         <outlet property="headerView" destination="ge9-I5-NIw" id="HtR-lL-h5f"/>
                         <outlet property="reloadButton" destination="nOE-ho-gdt" id="2Oq-0Q-HJt"/>
                         <outlet property="titleLabel" destination="7DI-aq-7ec" id="Al6-Nj-HyU"/>
