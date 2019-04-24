@@ -84,6 +84,7 @@ class ViewController: UIViewController {
         webView.bottomAnchor.constraint(equalToSystemSpacingBelow: containerView.bottomAnchor, multiplier: 0.0)
         webView.leadingAnchor.constraint(equalToSystemSpacingAfter: containerView.leadingAnchor, multiplier: 0.0)
         webView.trailingAnchor.constraint(equalToSystemSpacingAfter: containerView.trailingAnchor, multiplier: 0.0)
+        //  WebView内での長押しによるメニュー表示禁止
         setUpProgressView()
         
     }
@@ -212,7 +213,94 @@ extension ViewController: WKUIDelegate {
     }
 }
 
-extension ViewController: WKNavigationDelegate {}
+extension ViewController: WKNavigationDelegate {
+    // 認証対応
+    func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        print("webView:didReceive challenge: completionHandler called.")
+        // SSL/TLS接続ならここで処理する
+        if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
+            guard let serverTrust = challenge.protectionSpace.serverTrust else {
+                completionHandler(.rejectProtectionSpace, nil)
+                return
+            }
+            
+            var trustResult = SecTrustResultType.invalid
+            guard SecTrustEvaluate(serverTrust, &trustResult) == noErr else {
+                completionHandler(.rejectProtectionSpace, nil)
+                return
+            }
+            switch trustResult {
+            case .recoverableTrustFailure:
+                print("Trust failed recoverably")
+                // Safariのような認証書のエラーが出た時にアラートを出してそれでも信頼して接続する場合は続けるをタップしてください -> タップされたら強制的に接続のような実装はここで行う。
+                return
+            case .fatalTrustFailure:
+                completionHandler(.rejectProtectionSpace, nil)
+                return
+            case .invalid:
+                completionHandler(.rejectProtectionSpace, nil)
+                return
+            case .proceed:
+                break
+            case .deny:
+                completionHandler(.rejectProtectionSpace, nil)
+                return
+            case .unspecified:
+                break
+            default:
+                break
+            }
+            
+        } else if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodHTTPBasic
+            || challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodHTTPDigest
+            || challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodDefault
+            || challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodNegotiate
+            || challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodNTLM {
+            
+            let alert = UIAlertController(
+                title: "認証が必要です",
+                message: "ユーザー名とパスワードを入力してください",
+                preferredStyle: .alert
+            )
+            alert.addTextField(configurationHandler: {(textField: UITextField!) -> Void in
+                textField.placeholder = "user name"
+                textField.tag = 1
+            })
+            alert.addTextField(configurationHandler: {(textField: UITextField!) -> Void in
+                textField.placeholder = "password"
+                textField.isSecureTextEntry = true
+                textField.tag = 2
+            })
+            
+            let okAction = UIAlertAction(title: "ログイン", style: .default, handler: { _ in
+                var user = ""
+                var password = ""
+                
+                if let textFields = alert.textFields {
+                    for textField in textFields {
+                        if textField.tag == 1 {
+                            user = textField.text ?? ""
+                        } else if textField.tag == 2 {
+                            password = textField.text ?? ""
+                        }
+                    }
+                }
+                
+                let credential = URLCredential(user: user, password: password, persistence: URLCredential.Persistence.forSession)
+                completionHandler(.useCredential, credential)
+            })
+            
+            let cancelAction = UIAlertAction(title: "キャンセル", style: .cancel, handler: { _ in
+                completionHandler(.cancelAuthenticationChallenge, nil)
+            })
+            alert.addAction(okAction)
+            alert.addAction(cancelAction)
+            present(alert, animated: true, completion: nil)
+            return
+        }
+        completionHandler(.performDefaultHandling, nil)
+    }
+}
 
 extension ViewController:  UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
