@@ -83,12 +83,10 @@ class ViewController: UIViewController {
         webView.scrollView.delegate = self
         webView.allowsBackForwardNavigationGestures = true
         containerView.addSubview(webView)
-        // 制約
         webView.topAnchor.constraint(equalToSystemSpacingBelow: containerView.topAnchor, multiplier: 0.0).isActive = true
         webView.bottomAnchor.constraint(equalToSystemSpacingBelow: containerView.bottomAnchor, multiplier: 0.0)
         webView.leadingAnchor.constraint(equalToSystemSpacingAfter: containerView.leadingAnchor, multiplier: 0.0)
         webView.trailingAnchor.constraint(equalToSystemSpacingAfter: containerView.trailingAnchor, multiplier: 0.0)
-        //  WebView内での長押しによるメニュー表示禁止
         setUpProgressView()
         
     }
@@ -118,7 +116,6 @@ class ViewController: UIViewController {
         _observers.append(webView.observe(\.isLoading, options: .new) {_, change in
             if let value = change.newValue {
                 DispatchQueue.main.async {
-                    // isLoadingがtrueのときは更新できないようにしたい
                     self.reloadButton.isEnabled = !value
                     self.reloadButton.alpha = !value ? 1.0 : 0.4
                 }
@@ -164,7 +161,6 @@ extension ViewController: WKUIDelegate {
             }
         }
         
-        // target="_blank"のリンクを開く
         guard let targetFrame = navigationAction.targetFrame, targetFrame.isMainFrame else {
             webView.load(URLRequest(url: url))
             return nil
